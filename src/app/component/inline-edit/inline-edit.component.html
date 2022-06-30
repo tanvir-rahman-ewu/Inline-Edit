@@ -1,0 +1,36 @@
+<ng-container *ngTemplateOutlet="(editMode$ | async) ? editMode: viewMode"></ng-container>
+
+<ng-template #viewMode>
+    <div class="view-mode" title="Click to Edit">
+        <ng-content></ng-content>
+    </div>
+</ng-template>
+
+
+<ng-template #editMode>
+    <ng-container [ngSwitch]="editType">
+        <ng-container *ngSwitchCase="'text'">
+            <ng-container *ngTemplateOutlet="Text"></ng-container>
+        </ng-container>
+        <ng-container  *ngSwitchDefault>
+            <ng-container *ngTemplateOutlet="Combo"></ng-container>
+        </ng-container>
+    </ng-container>
+   
+    <button (click)="saveEdit()">Save</button>
+    <button (click)="leaveEditMode(true)">Cancel</button>
+</ng-template>
+
+<ng-template #Text>
+    <mat-form-field appearance="outline" (keydown.esc)="leaveEditMode()">
+        <input matInput type="text" autoFocus [(ngModel)]="localModel">
+    </mat-form-field>
+</ng-template>
+
+<ng-template #Combo>
+    <mat-form-field appearance="outline" >
+        <mat-select [(ngModel)]="localModel" (selectionChange)="this.isEditing = true" (openedChange)="openedChange()">
+          <mat-option *ngFor="let item of comboData" [value]="item[comboValue]">{{item[comboText]}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+</ng-template>
